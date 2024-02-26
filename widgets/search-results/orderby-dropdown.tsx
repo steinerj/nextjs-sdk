@@ -6,7 +6,7 @@ import { getWhiteListSearchParams } from '../document-list/common/utils';
 import { RequestContext } from '../../editor/request-context';
 import { SearchParams } from './interfaces/search-params';
 
-export async function OrderByDropDown(props: {
+export function OrderByDropDown(props: {
     sortingSelectId: string;
     searchParams: SearchParams,
     sorting: string;

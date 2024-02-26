@@ -5,12 +5,14 @@ import { ComponentMetadata, GetCategoriesArgs, GetWidgetMetadataArgs, GetWidgets
 import { RequestContext } from '../editor/request-context';
 import { WidgetMetadata } from '../editor/widget-framework/widget-metadata';
 import { createRoot } from 'react-dom/client';
+import { MetadataModel } from '@progress/sitefinity-widget-designers-sdk';
 
 export class RendererContractImpl implements RendererContract {
 
     getWidgetMetadata(args: GetWidgetMetadataArgs): Promise<ComponentMetadata> {
         const widgetRegister = RenderWidgetService.widgetRegistry.widgets[args.widgetName];
-        const designerMetadata = widgetRegister.designerMetadata;
+        const designerMetadata = widgetRegister?.designerMetadata ||
+            <MetadataModel>{Name: args.widgetName, Caption: args.widgetName, PropertyMetadata: [], PropertyMetadataFlat: []};
         return Promise.resolve(designerMetadata);
     }
 

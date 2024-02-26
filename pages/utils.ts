@@ -11,6 +11,7 @@ import { GetAllArgs } from '../rest-sdk/args/get-all.args';
 import { LayoutServiceResponse } from '../rest-sdk/dto/layout-service.response';
 import { initRestSdk } from '../rest-sdk/init';
 import { ErrorCodeException } from '../rest-sdk/errors/error-code.exception';
+import { GetPageLayoutArgs } from '../rest-sdk/args/get-page-layout.args';
 
 export async function pageLayout({ params, searchParams }: PageParams): Promise<LayoutServiceResponse> {
     if (params) {
@@ -23,11 +24,18 @@ export async function pageLayout({ params, searchParams }: PageParams): Promise<
     const pagePath = params.slug.join('/');
 
     try {
-        const layout = await RestClient.getPageLayout({
+        const args: GetPageLayoutArgs = {
             pagePath: params.slug.join('/'),
             queryParams: searchParams,
             cookie: cookies().toString()
-        });
+        };
+
+        // adding X-SF-Access-Key header so the layout service can return responce in edit
+        if (!args.cookie && process.env['SF_ACCESS_KEY']) {
+            args.additionalHeaders = {'X-SF-Access-Key': process.env['SF_ACCESS_KEY']};
+        }
+
+        const layout = await RestClient.getPageLayout(args);
 
         return layout;
     } catch (error) {
@@ -47,7 +55,7 @@ export async function pageLayout({ params, searchParams }: PageParams): Promise<
 
 export async function pageMetadata({ params, searchParams }: PageParams): Promise<Metadata> {
     const layout = await pageLayout({ params, searchParams });
-    if (layout.MetaInfo) {
+    if (layout?.MetaInfo) {
         return {
             title: layout.MetaInfo.Title,
             description: layout.MetaInfo.Description,

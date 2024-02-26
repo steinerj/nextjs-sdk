@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { VisibilityStyle } from '../styling/visibility-style';
-import { invalidDataAttr, invalidateElement, redirect, serializeForm } from '../common/utils';
+import { invalidDataAttr, invalidateElement, serializeForm } from '../common/utils';
 import { ChangePasswordViewModel } from './interfaces/change-password-view-model';
 import { classNames } from '../../editor/utils/classNames';
 import { getUniqueId } from '../../editor/utils/getUniqueId';
@@ -70,7 +70,7 @@ export function ChangePasswordFormClient (props: ChageFormProps) {
         } else if (action === 'RedirectToPage') {
             const redirectUrl = viewModel.RedirectUrl || '';
 
-            redirect(redirectUrl as Location | (string & Location));
+            window.location = (redirectUrl as Location | (string & Location));
         }
     };
 

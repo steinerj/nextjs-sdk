@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { VisibilityStyle } from '../styling/visibility-style';
-import { invalidDataAttr, isValidEmail, redirect, serializeForm } from '../common/utils';
+import { invalidDataAttr, isValidEmail, serializeForm } from '../common/utils';
 import { classNames } from '../../editor/utils/classNames';
 import { getUniqueId } from '../../editor/utils/getUniqueId';
 import { RequestContext } from '../../editor/request-context';
@@ -51,7 +51,7 @@ export function RegistrationFormClient(props: RegistrationFormProps) {
         } else if (action === 'RedirectToPage') {
             let redirectUrl = viewModel.RedirectUrl;
 
-            redirect(redirectUrl as Location | (string & Location));
+            window.location = (redirectUrl as Location | (string & Location));
         }
     };
 

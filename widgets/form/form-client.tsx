@@ -209,9 +209,11 @@ export function FormClient(props: FromContainerProps) {
     };
 
     const allInputsAreValid = React.useMemo(()=>{
-        return Object.entries(validatedInputs).map(([inputKey, inputValue])=>{
-            return !hiddenInputs[inputKey] && !skippedInputs[inputKey] && inputValue;
-        }).every((i)=>i);
+        return Object.entries(validatedInputs)
+            .filter(([inputKey, inputValue]) => !hiddenInputs[inputKey])
+            .map(([inputKey, inputValue])=>{
+                return !skippedInputs[inputKey] && inputValue;
+        }).every((i) => i);
     }, [validatedInputs, hiddenInputs, skippedInputs]);
 
     React.useEffect(()=>{

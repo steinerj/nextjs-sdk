@@ -12,4 +12,5 @@ export interface SearchFacetsViewModel {
     DisplayItemCount: boolean;
     HasAnyFacetElements: boolean;
     SearchFacets: SearchFacetModel[];
+    IsEdit: boolean;
 }

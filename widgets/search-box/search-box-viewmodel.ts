@@ -11,7 +11,7 @@ export interface SearchBoxViewModel {
     ScoringProfile: {
         ScoringSetting: string,
         ScoringParameters: string
-    } | null,
+    },
     SiteId: string;
     Culture: string;
     ActiveClass: string;

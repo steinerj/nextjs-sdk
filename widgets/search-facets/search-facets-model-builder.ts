@@ -5,7 +5,7 @@ import { SitefinityFacetType } from '../../rest-sdk/dto/sitefinity-facet-type';
 import { SearchIndexAdditionalFieldType } from './interfaces/search-index-additional-field-type';
 import { SearchFacetExtensions } from './search-facets-extensions';
 import { WidgetSettingsFacetFieldMapper } from './facet-field-mapper';
-import { SearchFacetModel } from './search-facets-class';
+import { SearchFacetModel, SearchFacetModelExtensions } from './search-facets-class';
 
 export class SearchFacetsModelBuilder {
     static buildFacetsViewModel(facetsWidgetDefinition: FacetField[], facets: { [key: string]: FacetResponseDto[] }, facetableFieldsKeysFromIndex: string[], sortType: string): SearchFacetModel[] {
@@ -45,7 +45,7 @@ export class SearchFacetsModelBuilder {
                     widgetFacetableFields
                 );
                 const facetField: FacetField = widgetFacetableFields[facetKey] as FacetField;
-                let searchFacetViewModel = new SearchFacetModel(facetField, facetElementValues);
+                let searchFacetViewModel = SearchFacetModelExtensions.getModel(facetField, facetElementValues);
                 searchFacets.push(searchFacetViewModel);
             }
 

@@ -2,6 +2,7 @@ import { Dictionary } from '../../typings/dictionary';
 
 export interface GetPageLayoutArgs {
     pagePath: string,
-    queryParams?: Dictionary
+    queryParams?: Dictionary;
     cookie?: string;
+    additionalHeaders?: {[key: string]: string};
 }

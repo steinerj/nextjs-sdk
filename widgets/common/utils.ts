@@ -17,10 +17,6 @@ export const invalidateElement = (emptyInputs: any, element: HTMLInputElement) =
     }
 };
 
-export const redirect = (redirectUrl: Location | (string & Location)) => {
-    window.location = redirectUrl;
-};
-
 export const isValidEmail = function (email: string) {
     return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w+)+$/.test(email);
 };

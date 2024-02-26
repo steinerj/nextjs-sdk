@@ -18,6 +18,7 @@ import { SearchResultsEntity } from './search-results.entity';
 import { SanitizerService } from '../../services/sanitizer-service';
 import { ContentListSettings } from './content-list-settings';
 import { SearchParams } from './interfaces/search-params';
+import { LanguagesList } from './languages-list';
 
 export async function SearchResults(props: WidgetContext<SearchResultsEntity>) {
     const dataAttributes = htmlAttributes(props);
@@ -29,8 +30,11 @@ export async function SearchResults(props: WidgetContext<SearchResultsEntity>) {
     const cultures = context.layout.Site.Cultures;
     const languageNames = new Intl.DisplayNames(['en'], { type: 'language' });
 
-    const languages = cultures.map((culture: string) => {
-        return languageNames.of(culture) || culture;
+    const languages: {Name: string, Title: string}[] = cultures.map((culture: string) => {
+        return {
+          Name: culture,
+          Title: languageNames.of(culture) || culture
+        };
     });
 
     const viewModel: SearchResultsViewModel  = {
@@ -57,11 +61,10 @@ export async function SearchResults(props: WidgetContext<SearchResultsEntity>) {
         viewModel.ResultsHeader = entity.NoResultsHeader.replace('\"{0}\"', searchParams.searchQuery || '\"\"');
     }
 
-    const languagesCount = viewModel.Languages.length;
     if (searchParams.searchQuery) {
         const response = await performSearch(entity, searchParams);
-        viewModel.TotalCount = response.totalCount || 0;
-        viewModel.SearchResults = response.searchResults || [];
+        viewModel.TotalCount = response?.totalCount || 0;
+        viewModel.SearchResults = response?.searchResults || [];
 
         if (entity.SearchResultsHeader) {
             if (viewModel.SearchResults && viewModel.SearchResults.length > 0) {
@@ -114,17 +117,7 @@ export async function SearchResults(props: WidgetContext<SearchResultsEntity>) {
             <h4>{viewModel.TotalCount} {viewModel.ResultsNumberLabel}</h4>
             <p data-sf-hide-while-loading="true">
               {viewModel.LanguagesLabel + ' '}
-              {
-                viewModel.Languages.map((language: string, idx: number) => {
-                    return (<span key={idx}>
-                      <a className="text-decoration-none" data-sf-role="search-results-language"
-                        data-sf-language={language}
-                        href="#">{language}
-                      </a>
-                      {idx + 1 < languagesCount ? ', ' : null}
-                    </span>);
-                })
-              }
+              <LanguagesList context={context} languages={viewModel.Languages} searchParams={searchParams}/>
             </p>
           </div>
           <div className="mt-4" data-sf-hide-while-loading="true">
@@ -201,7 +194,8 @@ async function performSearch(entity: SearchResultsEntity, searchParams: SearchPa
         take = listSettings.LimitItemsCount;
     }
 
-    return await RestClient.performSearch({
+    try {
+      const searchResults = await RestClient.performSearch({
         indexCatalogue: searchParams.indexCatalogue,
         searchQuery: searchParams.searchQuery,
         wordsMode: searchParams.wordsMode,
@@ -212,7 +206,12 @@ async function performSearch(entity: SearchResultsEntity, searchParams: SearchPa
         searchFields: entity.SearchFields as string,
         highlightedFields: entity.HighlightedFields as string,
         scoringInfo: searchParams.scoringInfo,
-        resultsForAllSites: searchParams.resultsForAllSites ? Boolean(searchParams.resultsForAllSites) : null,
+        resultsForAllSites: searchParams.resultsForAllSites === 'True',
         filter: searchParams.filter
-    });
-}
+      });
+
+      return searchResults;
+    } catch (_) {
+      return null;
+    }
+  }

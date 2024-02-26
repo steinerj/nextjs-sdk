@@ -38,5 +38,3 @@ export function RenderPageScripts({ layout }: { layout: LayoutServiceResponse })
 
     return <></>;
 }
-
-

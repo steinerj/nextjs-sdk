@@ -15,7 +15,13 @@ export async function RenderWidget({ searchParams }: { searchParams: { [key: str
     const widgetSegmentId = searchParams['widgetSegmentId'];
     const segmentId = searchParams['segment'];
 
-    const widgetModel = await RestClient.getWidgetModel({ id: itemId, type: itemType, widgetId, widgetSegmentId: widgetSegmentId, segmentId: segmentId });
+    const widgetModel = await RestClient.getWidgetModel({
+        id: itemId,
+        type: itemType,
+        widgetId,
+        widgetSegmentId,
+        segmentId,
+        additionalHeaders: {'Cookie': cookies().toString()} });
 
     const isEdit = searchParams['sfaction'] === 'edit';
     const isPreview = searchParams['sfaction'] === 'preview';

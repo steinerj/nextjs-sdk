@@ -4,7 +4,7 @@ export * from './widgets/default-widget-registry';
 export * from './pages/render-page';
 export * from './pages/render-widget';
 export * from './pages/render-lazy-widgets';
-export { initRendering, pageMetadata } from './pages/utils';
+export { initRendering, pageMetadata, pageLayout } from './pages/utils';
 
 export * from './editor/utils/classNames';
 

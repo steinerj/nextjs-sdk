@@ -359,7 +359,7 @@ export class RestClient {
     public static async getFacets(args: GetFacetsArgs): Promise<FacetFlatResponseDto[]> {
         const facetsStr = JSON.stringify(args.facets);
         const additionalQueryParams = {
-            ['searchQuery']: args.searchFields,
+            ['searchQuery']: args.searchQuery,
             ['sf_culture']: args.culture,
             ['indexCatalogName']: args.indexCatalogue,
             ['filter']: args.filter,
@@ -502,8 +502,16 @@ export class RestClient {
                 name = pagePath.substring(indexOfFormName, nextIndexOfSlash);
             }
 
+            const headers: {[key: string]: string} = {};
+            if (args.cookie) {
+                headers['Cookie'] = args.cookie;
+            } else if (process.env['SF_ACCESS_KEY']) {
+                headers['X-SF-Access-Key'] = process.env['SF_ACCESS_KEY'];
+            }
+
             const formResponse = await RestClient.sendRequest<{ value: SdkItem[] }>({
-                url: RootUrlService.getServerCmsUrl() + `/sf/system/forms?$filter=Name eq \'${name}\'`
+                url: RootUrlService.getServerCmsUrl() + `/sf/system/forms?$filter=Name eq \'${name}\'`,
+                headers
             });
 
             url = `/api/default/forms(${formResponse.value[0].Id})/Default.Model()`;
@@ -537,7 +545,7 @@ export class RestClient {
         let sysParamsQueryString = RestClient.buildQueryParams(whitelistedParamDic);
         url += `${sysParamsQueryString}`;
 
-        let headers: { [key: string]: string } = {};
+        let headers: { [key: string]: string } = args.additionalHeaders || {};
         if (args.cookie) {
             headers['Cookie'] = args.cookie;
             const proxyHeaders = getProxyHeaders();
@@ -567,6 +575,10 @@ export class RestClient {
         } catch (error) {
             if (error instanceof ErrorCodeException && error.code === 'NotFound') {
                 throw error;
+            }
+
+            if (error  instanceof ErrorCodeException && error.code === 'Unauthorized') {
+                throw `Could not authorize fetching layout for url '${pagePath}'. Contact your system administator or check your access token.`;
             }
         }
 
@@ -728,14 +740,11 @@ export class RestClient {
             };
         }
 
-        return Object.assign(RestClient.contextQueryParams || {}, queryParamsFromArgs, args?.additionalQueryParams || {}, queryParams || {});
+        return Object.assign({}, RestClient.contextQueryParams || {}, queryParamsFromArgs, args?.additionalQueryParams || {}, queryParams || {});
     }
 
     private static buildHeaders(requestData: RequestData) {
         let headers: { [key:string]: string } = { 'X-Requested-With': 'react' };
-        if (process.env['SF_ACCESS_KEY']) {
-            headers['X-SF-Access-Key'] = process.env['SF_ACCESS_KEY'];
-        }
 
         if ((requestData.method === 'POST' || requestData.method === 'PATCH') && !headers['Content-Type']) {
             headers['Content-Type'] = 'application/json';

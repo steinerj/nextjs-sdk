@@ -104,7 +104,7 @@ export * from './search-box/search-box.entity';
 
 export * from './search-facets/search-facets';
 export * from './search-facets/search-facets-extensions';
-export * from './search-facets/search-facets-model';
+export * from './search-facets/search-facets-client';
 export * from './search-facets/search-facets-model-builder';
 export * from './search-facets/search-facets-viewmodel';
 export * from './search-facets/search-facets.entity';
@@ -117,6 +117,7 @@ export * from './search-facets/interfaces/search-index-additional-field-type';
 
 export * from './search-results/search-results';
 export * from './search-results/search-results.entity';
+export * from './search-results/languages-list';
 export * from './search-results/orderby-dropdown';
 export * from './search-results/interfaces/search-params';
 export * from './search-results/interfaces/search-results-sorting';

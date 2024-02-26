@@ -89,7 +89,7 @@ export function TextFieldClient(props: { viewModel: TextFieldViewModel, textBoxU
         dispatchValidity(textBoxUniqueId, isValid);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[formSubmitted]);
+    }, [formSubmitted]);
 
     const rootClass = classNames(
         'mb-3',

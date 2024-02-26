@@ -5,7 +5,7 @@ import { Facet } from '../../rest-sdk/dto/facets/facet';
 import { WidgetSettingsFacetFieldMapper } from './facet-field-mapper';
 import { FacetFlatResponseDto } from '../../rest-sdk/dto/facets/facet-flat-dto';
 import { SearchFacetsModelBuilder } from './search-facets-model-builder';
-import { SearchFacetsClient } from './search-facets-model';
+import { SearchFacetsClient } from './search-facets-client';
 import { SearchFacetsEntity } from './search-facets.entity';
 import { classNames } from '../../editor/utils/classNames';
 import { htmlAttributes, getCustomAttributes } from '../../editor/widget-framework/attributes';
@@ -31,7 +31,8 @@ export async function SearchFacets(props: WidgetContext<SearchFacetsEntity>) {
         IsShowMoreLessButtonActive: entity.IsShowMoreLessButtonActive,
         DisplayItemCount: entity.DisplayItemCount,
         HasAnyFacetElements: false,
-        SearchFacets: []
+        SearchFacets: [],
+        IsEdit: props.requestContext.isEdit
     };
 
     const searchQuery = searchParams['searchQuery'];
@@ -54,7 +55,21 @@ export async function SearchFacets(props: WidgetContext<SearchFacetsEntity>) {
         const filter = searchParams['filter'];
         const culture = searchParams['sf_culture'];
         const resultsForAllSites = searchParams['resultsForAllSites'];
-        let searchServiceFacetResponse = await RestClient.getFacets({ searchQuery, culture, indexCatalogue: entity.IndexCatalogue, filter, resultsForAllSites, searchFields: entity.SearchFields as string, facets });
+        let searchServiceFacetResponse: FacetFlatResponseDto[] = [];
+        
+        try {
+            searchServiceFacetResponse = await RestClient.getFacets({
+                searchQuery,
+                culture,
+                indexCatalogue: entity.IndexCatalogue,
+                filter,
+                resultsForAllSites,
+                searchFields: entity.SearchFields as string,
+                facets
+            });
+        } catch (_) {
+            // noop
+        }
 
         const facetsDict = Object.fromEntries(
             searchServiceFacetResponse.map((p: FacetFlatResponseDto) => [p.FacetKey, p.FacetResponses])
@@ -82,7 +97,7 @@ export async function SearchFacets(props: WidgetContext<SearchFacetsEntity>) {
         >
           <SearchFacetsClient viewModel={viewModel} searchParams={searchParams} />
         </div>
-        <input type="hidden" id="sf-currentPageUrl" value="@(this.Context?.Request.Path ?? string.Empty)" />
+        <input type="hidden" id="sf-currentPageUrl" value={props.requestContext.url || ''} />
       </>
     );
 }

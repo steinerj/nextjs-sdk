@@ -21,6 +21,10 @@ export class RenderWidgetService {
         };
 
         try {
+            if (!registeredType) {
+                throw new Error(`No widget named "${widgetModel.Name}" found in the registry`);
+            }
+
             RenderWidgetService.parseProperties(propsForWidget.model, registeredType);
             let componentType = registeredType.componentType;
             if (!requestContext.isEdit && widgetModel.Lazy) {

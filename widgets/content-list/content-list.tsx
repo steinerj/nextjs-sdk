@@ -7,7 +7,7 @@ import { ContentListModelMaster } from '../content-lists-common/content-list-mas
 import { ContentListsCommonRestService } from '../content-lists-common/content-lists-rest.setvice';
 import { ListDisplayMode } from '../../editor/widget-framework/list-display-mode';
 import { Pager } from '../pager/pager';
-import { htmlAttributes } from '../../editor/widget-framework/attributes';
+import { htmlAttributes, setHideEmptyVisual } from '../../editor/widget-framework/attributes';
 import { DetailItem } from '../../editor/detail-item';
 import { WidgetContext } from '../../editor/widget-framework/widget-context';
 import { RequestContext } from '../../editor/request-context';
@@ -28,6 +28,10 @@ export async function ContentList(props: WidgetContext<ContentListEntity>) {
         detailModel: null,
         listModel: null
     };
+
+    if (properties.SelectedItems?.Content?.length && properties.SelectedItems?.Content[0].Variations) {
+        setHideEmptyVisual(attributes, true);
+    }
 
     const pageNumber = getPageNumber(properties.PagerMode, props.requestContext, properties.PagerQueryTemplate, properties.PagerTemplate);
 

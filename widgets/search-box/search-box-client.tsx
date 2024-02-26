@@ -90,39 +90,50 @@ export function SearchBoxClient(props: { searchModel: SearchBoxViewModel }) {
         const searchParams = getSearchBoxParams();
         let query = input.value.trim();
         let resultsUrl = searchParams.resultsUrl || '';
-        let separator = resultsUrl.indexOf('?') === -1 ? '?' : '&';
-        let catalogue = separator + 'indexCatalogue=' + searchParams.catalogue;
-        let searchQuery = '&searchQuery=' + encodeURIComponent(query);
-        let wordsMode = '&wordsMode=' + 'AllWords';
-        let culture = '&sf_culture=' + searchParams.culture;
 
-        let url = resultsUrl + catalogue + searchQuery + wordsMode + culture;
+        const queryParams: {[key: string]: string} = {
+            indexCatalogue: searchParams.catalogue!,
+            searchQuery: encodeURIComponent(query),
+            wordsMode: 'AllWords',
+            sf_culture: searchParams.culture
+        };
+
+        let separator = resultsUrl.indexOf('?') === -1 ? '?' : '&';
 
         let scoringSetting = searchParams.scoringSetting;
         if (scoringSetting) {
-            url = url + '&scoringInfo=' + scoringSetting;
+            queryParams['scoringInfo'] = scoringSetting;
         }
 
-        let sorting = searchParams.orderBy;
-        if (sorting) {
-            url = url + '&orderBy=' + sorting;
+        if (searchParams.orderBy) {
+            queryParams['$orderBy'] = searchParams.orderBy;
         }
 
         let resultsForAllSites = searchParams.resultsForAllSites;
         if (resultsForAllSites === 1) {
-            url += '&resultsForAllSites=True';
+            queryParams['resultsForAllSites'] = 'True';
         } else if (resultsForAllSites === 2) {
-            url += '&resultsForAllSites=False';
+            queryParams['resultsForAllSites'] = 'False';
         }
 
-        return url;
+        return `${resultsUrl}${separator}${Object.keys(queryParams).map(key => `${key}=${queryParams[key]}`).join('&')}`;
+    };
+
+    const serializeScoringProfile = (scoringProfie: {ScoringSetting: string, ScoringParameters: string}) => {
+        let res = scoringProfie.ScoringSetting;
+
+        if (!!scoringProfie.ScoringParameters) {
+            res = `${res};${scoringProfie.ScoringParameters}`;
+        }
+
+        return btoa(res);
     };
 
     const getSearchBoxParams = () => {
         return {
             resultsUrl: searchModel.SearchResultsPageUrl,
             catalogue: searchModel.SearchIndex,
-            scoringSetting: searchModel.ScoringProfile,
+            scoringSetting: serializeScoringProfile(searchModel.ScoringProfile),
             minSuggestionLength: searchModel.SuggestionsTriggerCharCount,
             siteId: searchModel.SiteId,
             culture: searchModel.Culture,
@@ -249,7 +260,7 @@ export function SearchBoxClient(props: { searchModel: SearchBoxViewModel }) {
         <div className="d-flex">
           <input type="text" className="form-control" disabled={disabled} placeholder={searchModel.SearchBoxPlaceholder || undefined} defaultValue={searchModel.SearchQuery} ref={inputRef}
             onKeyUp={inputKeyupHandler} onKeyDown={inputKeydownHandler} onBlur={handleDropDownBlur} {...searchBoxCustomAttributes} />
-          <button data-sf-role="search-button" className="btn btn-primary ms-2 flex-shrink-0" disabled={disabled}>
+          <button data-sf-role="search-button" className="btn btn-primary ms-2 flex-shrink-0" disabled={disabled} onClick={navigateToResults}>
             {searchModel.SearchButtonLabel}
           </button>
         </div>

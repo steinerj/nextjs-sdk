@@ -22,10 +22,10 @@ export async function SearchBox(props: WidgetContext<SearchBoxEntity>) {
 
     dataAttributes['className'] = classNames('position-relative', defaultClass, marginClass);
 
-    let scoringProfile = entity.ScoringProfile ? {
+    let scoringProfile = {
         ScoringSetting: entity.ScoringProfile || '',
-        ScoringParameters: (entity.ScoringParameters && entity.ScoringParameters.length) ? entity.ScoringParameters.join(';') : ''
-    } : null;
+        ScoringParameters: entity.ScoringParameters?.length ? entity.ScoringParameters.join(';') : ''
+    };
 
     let searchResultsPageUrl: string | null = null;
     if (entity.SearchResultsPage) {

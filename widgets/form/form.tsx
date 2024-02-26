@@ -66,7 +66,7 @@ export async function Form(props: WidgetContext<FormEntity>) {
         viewModel.SubmitUrl = `/forms/submit/${formDto.Name}/${context.culture}?${QueryParamNames.Site}=${context.layout.SiteId}&${QueryParamNames.SiteTempFlag}=true`;
 
         if (entity.FormSubmitAction === FormSubmitAction.Redirect && entity.RedirectPage) {
-            const redirectPage = await RestClientForContext.getItem<PageItem>(entity.RedirectPage);
+            const redirectPage = await RestClientForContext.getItem<PageItem>(entity.RedirectPage, { type: RestSdkTypes.Pages });
             if (redirectPage) {
                 viewModel.CustomSubmitAction = true;
                 viewModel.RedirectUrl = await redirectPage.ViewUrl;
@@ -160,7 +160,7 @@ function getFormRulesViewModel(form: FormDto): string {
 
 function getHiddenFields(formModel: LayoutServiceResponse) {
     const hiddenFields = formModel.ComponentContext.Components
-        .filter((x: WidgetModel<any>) => x.Properties.Hidden)
+        .filter((x: WidgetModel<any>) => x.Properties.Hidden === 'True' || x.Properties.Hidden === 'true')
         .map((x: WidgetModel<any>) => x.Properties.SfFieldName);
 
     return hiddenFields;
