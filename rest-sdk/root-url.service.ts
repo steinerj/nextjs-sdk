@@ -20,7 +20,7 @@ export class RootUrlService {
             rootUrl = process.env['SF_CMS_URL'] as string;
         }
 
-        if (rootUrl.endsWith('/')) {
+        if (rootUrl && rootUrl.endsWith('/')) {
             rootUrl.substring(0, rootUrl.length - 1);
         }
 
@@ -28,7 +28,7 @@ export class RootUrlService {
     }
 
     public static getServerCmsServiceUrl() {
-        return `${RootUrlService.getServerCmsUrl()}/${RootUrlService.getWebServicePath()}`;
+        return `${RootUrlService.getServerCmsUrl() || ''}/${RootUrlService.getWebServicePath()}`;
     }
 
     public static getWebServicePath() {

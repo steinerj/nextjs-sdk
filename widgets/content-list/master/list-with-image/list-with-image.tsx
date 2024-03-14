@@ -23,7 +23,12 @@ export function ListWithImage(props: { model: ListWithImageModel, entity?: Conte
                       <div className="flex-grow-1 ms-3">
                         {item.Title && <h5 className={item.Title.Css}>{item.Title.Value}</h5>}
                         {item.Text && <p className={item.Text.Css}>{item.Text.Value}</p>}
-                        {model.OpenDetails && <OpenDetailsAnchor entity={props.entity} className="btn btn-primary" item={item} text={'Learn more'} />}
+                        {model.OpenDetails && <OpenDetailsAnchor
+                          detailPageMode={props.entity?.DetailPageMode!}
+                          detailPage={props.entity?.DetailPage!}
+                          className="btn btn-primary"
+                          item={item}
+                          text={'Learn more'} />}
                       </div>
                     </div>
                   </Fragment>

@@ -4,7 +4,7 @@ import { SitefinityFacetType } from '../sitefinity-facet-type';
 export interface Facet {
     FieldName?: string;
     CustomIntervals?: CustomFacetRange[];
-    IntervalRange?: string;
+    IntervalRange?: string | null;
     FacetFieldType?: string;
     SitefinityFacetType: SitefinityFacetType;
 }

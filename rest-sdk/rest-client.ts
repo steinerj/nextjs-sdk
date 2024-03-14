@@ -503,11 +503,8 @@ export class RestClient {
             }
 
             const headers: {[key: string]: string} = {};
-            if (args.cookie) {
-                headers['Cookie'] = args.cookie;
-            } else if (process.env['SF_ACCESS_KEY']) {
-                headers['X-SF-Access-Key'] = process.env['SF_ACCESS_KEY'];
-            }
+
+            RestClient.addAuthHeaders(args.cookie, headers);
 
             const formResponse = await RestClient.sendRequest<{ value: SdkItem[] }>({
                 url: RootUrlService.getServerCmsUrl() + `/sf/system/forms?$filter=Name eq \'${name}\'`,
@@ -730,6 +727,14 @@ export class RestClient {
         return result;
     }
 
+    public static addAuthHeaders(cookie: string | undefined, headers: {[key: string]: string}) {
+        if (!!cookie) {
+            headers['Cookie'] = cookie;
+        } else if (process.env['SF_ACCESS_KEY']) {
+            headers['X-SF-Access-Key'] = process.env['SF_ACCESS_KEY'];
+        }
+    }
+
     private static getQueryParams(args?: CommonArgs, queryParams?: Dictionary) {
         let queryParamsFromArgs = {};
 
@@ -785,7 +790,13 @@ export class RestClient {
     }
 
     public static buildItemBaseUrl(itemType: string): string {
-        const serviceUrl = RootUrlService.getServerCmsServiceUrl();
+        let serviceUrl = null;
+        if (typeof window === 'undefined') {
+            serviceUrl = RootUrlService.getServerCmsServiceUrl();
+        } else {
+            serviceUrl = RootUrlService.getClientServiceUrl();
+        }
+
         const setName = ServiceMetadata.getSetNameFromType(itemType);
 
         return `${serviceUrl}/${setName}`;

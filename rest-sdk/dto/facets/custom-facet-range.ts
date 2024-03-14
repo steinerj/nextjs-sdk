@@ -1,4 +1,4 @@
 export interface CustomFacetRange {
-    From: string;
-    To: string;
+    From: string | null;
+    To: string | null;
 }

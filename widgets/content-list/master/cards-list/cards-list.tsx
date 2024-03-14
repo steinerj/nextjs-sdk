@@ -23,7 +23,10 @@ export function CardsList(props: { model: CardsListModel, entity?: ContentListEn
                     <div className="card-body">
                       <h5 className={item.Title.Css}>
                         {model.OpenDetails ?
-                          <OpenDetailsAnchor entity={props.entity} item={item} /> :
+                          <OpenDetailsAnchor
+                            detailPageMode={props.entity?.DetailPageMode!}
+                            detailPage={props.entity?.DetailPage!}
+                            item={item} /> :
                                     (item.Title.Value)
                                 }
                       </h5>

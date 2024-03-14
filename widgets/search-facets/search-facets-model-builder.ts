@@ -153,9 +153,9 @@ export class SearchFacetsModelBuilder {
         let dateRange = dateRanges!.find(
             (r) =>
                 r.From &&
-                r.From.toISOString() === facetResponse.From &&
+                WidgetSettingsFacetFieldMapper.parseDateIsoString(r.From) === facetResponse.From &&
                 r.To &&
-                r.To.toISOString() === facetResponse.To
+                WidgetSettingsFacetFieldMapper.parseDateIsoString(r.To) === facetResponse.To
         );
 
         if (dateRange != null) {
@@ -206,8 +206,8 @@ export class SearchFacetsModelBuilder {
 
     static getIntervalNumberLabel(facetResponse: FacetResponseDto, facetableFieldSettings: FacetField): string {
         let facetLabel: string;
-        const prefix = facetableFieldSettings.FacetFieldSettings!.Prefix;
-        const suffix = facetableFieldSettings.FacetFieldSettings!.Suffix;
+        const prefix = facetableFieldSettings.FacetFieldSettings!.Prefix || '';
+        const suffix = facetableFieldSettings.FacetFieldSettings!.Suffix || '';
 
         facetLabel = `${prefix}${facetResponse.From}${suffix} - ${prefix}${facetResponse.To}${suffix}`;
         return facetLabel;

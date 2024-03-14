@@ -15,7 +15,10 @@ export function ListWithSummary(props: { model: ListWithSummaryModel, entity?: C
                       {item.Title &&
                         <h5 className={item.Title.Css}>
                           {model.OpenDetails ?
-                            <OpenDetailsAnchor entity={props.entity} item={item} /> :
+                            <OpenDetailsAnchor
+                              detailPageMode={props.entity?.DetailPageMode!}
+                              detailPage={props.entity?.DetailPage!}
+                              item={item} /> :
                                         (item.Title.Value)
                                     }
                         </h5>}
