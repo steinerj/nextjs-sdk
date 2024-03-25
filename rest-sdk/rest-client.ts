@@ -825,6 +825,17 @@ export class RestClient {
 
             if (contentTypeHeader.indexOf('application/json') !== -1) {
                 return x.json().then(x => <T>x);
+            } else {
+                return x.text().then((text) => {
+                    let ret: T = {} as T;
+                    try {
+                        ret = JSON.parse(text);
+                    } catch (error) {
+                        throw `Failed to parse response as JSON. Url -> ${x.url}`;
+                    }
+
+                    return ret;
+                });
             }
         }
 
